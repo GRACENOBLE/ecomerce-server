@@ -1,8 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"github.com/GRACENOBLE/kampe-backend/app"
+)
 
 
 func main () {
-	fmt.Println("hello world")
+	app.Router()
 }
