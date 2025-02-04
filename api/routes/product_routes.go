@@ -1,6 +1,11 @@
 package routes
 
 import (
+	"context"
+	"fmt"
+	"log"
+
+	"github.com/GRACENOBLE/kampe-backend/database"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +18,25 @@ func RegisterProductRoutes(r *gin.Engine) {
 }
 
 func getProducts(c *gin.Context) {
-	// Handler logic for getting products
+	db := database.ConnectDatabase()
+	defer db.Close()
+
+	rows, err := db.Query(context.Background(), "SELECT id, name FROM users")
+	if err != nil {
+		log.Fatalf("Failed to query data: %v\n", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id string
+		var name string
+		err := rows.Scan(&id, &name)
+		if err != nil {
+			log.Fatalf("Failed to scan row: %v\n", err)
+		}
+		fmt.Printf("ID: %s, Name: %s\n", id, name)
+	}
+
 }
 
 func createProduct(c *gin.Context) {
