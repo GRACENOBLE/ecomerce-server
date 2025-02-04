@@ -2,7 +2,7 @@ package routes
 
 import (
 	"context"
-	"fmt"
+	// "fmt"
 	"log"
 
 	"github.com/GRACENOBLE/kampe-backend/database"
@@ -26,6 +26,8 @@ func getProducts(c *gin.Context) {
 		log.Fatalf("Failed to query data: %v\n", err)
 	}
 	defer rows.Close()
+
+	productsMap := make(map[string]map[string]interface{})
 
 	for rows.Next() {
 		var (
@@ -55,9 +57,53 @@ func getProducts(c *gin.Context) {
 		if err != nil {
 			log.Fatalf("Failed to scan row: %v\n", err)
 		}
-		fmt.Printf("ID: %s, Name: %s\n", productID, productName)
+
+		if _, exists := productsMap[productID]; !exists {
+			productsMap[productID] = map[string]interface{}{
+				"id":          productID,
+				"name":        productName,
+				"description": description,
+				"base_price":  basePrice,
+				"sku":         productSKU,
+				"inventory":   productInventory,
+				"has_variants": hasVariants,
+				"variants":    []map[string]interface{}{},
+			}
+		}
+
+		if variantID != nil {
+			variant := map[string]interface{}{
+				"id":        *variantID,
+				"sku":       *variantSKU,
+				"price":     *variantPrice,
+				"color":     *variantColor,
+				"size":      *variantSize,
+				"inventory": *variantInventory,
+				"images":    []map[string]interface{}{},
+			}
+
+			if imageID != nil {
+				image := map[string]interface{}{
+					"id":            *imageID,
+					"url":           *imageURL,
+					"thumbnail_url": *thumbnailURL,
+					"type":          *imageType,
+				}
+				variant["images"] = append(variant["images"].([]map[string]interface{}), image)
+			}
+
+			productsMap[productID]["variants"] = append(productsMap[productID]["variants"].([]map[string]interface{}), variant)
+		}
 	}
 
+	products := []map[string]interface{}{}
+	for _, product := range productsMap {
+		products = append(products, product)
+	}
+
+	c.JSON(200, gin.H{
+		"products": products,
+	})
 }
 
 func createProduct(c *gin.Context) {
