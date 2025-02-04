@@ -28,13 +28,34 @@ func getProducts(c *gin.Context) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var id string
-		var name string
-		err := rows.Scan(&id, &name)
+		var (
+			productID        string
+			productName      string
+			description      string
+			basePrice        float64
+			productSKU       string
+			productInventory int
+			hasVariants      bool
+			variantID        *string
+			variantSKU       *string
+			variantPrice     *float64
+			variantColor     *string
+			variantSize      *string
+			variantInventory *int
+			imageID          *string
+			imageURL         *string
+			thumbnailURL     *string
+			imageType        *string
+		)
+		err := rows.Scan(
+			&productID, &productName, &description, &basePrice, &productSKU, &productInventory, &hasVariants,
+			&variantID, &variantSKU, &variantPrice, &variantColor, &variantSize, &variantInventory,
+			&imageID, &imageURL, &thumbnailURL, &imageType,
+		)
 		if err != nil {
 			log.Fatalf("Failed to scan row: %v\n", err)
 		}
-		fmt.Printf("ID: %s, Name: %s\n", id, name)
+		fmt.Printf("ID: %s, Name: %s\n", productID, productName)
 	}
 
 }
