@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/GRACENOBLE/kampe-backend/api/routes"
+	"github.com/GRACENOBLE/kampe-backend/api"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -17,7 +17,7 @@ func Router() {
 
 	r := gin.Default()
 	
-	routes.RegisterProductRoutes(r)
+	api.RegisterProductRoutes(r)
 
 	port := os.Getenv("SERVER_PORT")
 	if port == "" {
