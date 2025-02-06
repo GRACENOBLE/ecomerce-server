@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetProducts(c *gin.Context) {
+func GetAllProducts(c *gin.Context) {
 	db := database.ConnectDatabase()
 	defer db.Close()
 

@@ -16,7 +16,7 @@ func Router() {
 	}
 
 	r := gin.Default()
-	
+
 	api.RegisterProductRoutes(r)
 
 	port := os.Getenv("SERVER_PORT")
